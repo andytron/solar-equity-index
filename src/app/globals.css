@@ -1,4 +1,10 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@plugin "daisyui" {
+  themes:
+    light --default,
+    dark --prefersdark,
+    forest;
+}
 
 :root {
   --background: #ffffff;
@@ -20,7 +26,7 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
