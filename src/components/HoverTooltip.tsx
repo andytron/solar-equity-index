@@ -66,7 +66,7 @@ export default function HoverTooltip({ tract, point }: Props) {
           <span>{tract.sei_tier} Priority</span>
         </div>
         <div className="text-base-content/60 text-xs">
-          SEI: {tract.sei.toFixed(2)} · Click for details
+         <span className="font-mono">SEI: {tract.sei.toFixed(2)}</span> (Click for details)
         </div>
       </div>
     </div>

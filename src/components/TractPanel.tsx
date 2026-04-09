@@ -77,7 +77,7 @@ export default function TractPanel({ tract, onClose }: Props) {
             <div className="text-xs text-base-content/60 uppercase tracking-wide">
               {tract.district}
             </div>
-            <div className="font-semibold">Tract {tract.geoid.slice(-6)}</div>
+            <div className="font-semibold font-mono">Tract {tract.geoid.slice(-6)}</div>
           </div>
           <div className="flex items-center gap-3">
             <span
@@ -133,7 +133,7 @@ export default function TractPanel({ tract, onClose }: Props) {
           {statRows.map(({ label, value }) => (
             <div key={label}>
               <div className="text-xs text-base-content/60">{label}</div>
-              <div className="text-sm font-medium mt-0.5">{value}</div>
+              <div className="text-sm font-mono font-medium mt-0.5">{value}</div>
             </div>
           ))}
         </div>
