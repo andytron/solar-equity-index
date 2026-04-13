@@ -1,0 +1,135 @@
+'use client'
+
+import { useState, useRef, useCallback, useEffect } from 'react'
+import mapboxgl from 'mapbox-gl'
+
+interface Props {
+  mapRef: React.RefObject<mapboxgl.Map | null>
+  onTractFound: (geoid: string) => void
+  onSearchResult: (lng: number, lat: number) => void
+  onClear?: () => void  // optional callback so parent can react to clear
+  onClearRef?: (clearFn: () => void) => void
+}
+
+export default function SearchBar({ mapRef, onTractFound, onSearchResult, onClear, onClearRef }: Props) {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+
+  const clear = useCallback(() => {
+    setQuery('')
+    setResults([])
+    onClear?.()
+  }, [onClear])
+
+  const search = async (q: string) => {
+    if (q.length < 3) { setResults([]); return }
+    setLoading(true)
+    try {
+      const res = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(q)}.json` +
+        `?access_token=${process.env.NEXT_PUBLIC_MAPBOX_TOKEN}` +
+        `&types=address,neighborhood,place` +
+        `&country=US&limit=5`
+      )
+      const data = await res.json()
+      setResults(data.features ?? [])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const q = e.target.value
+    setQuery(q)
+    if (!q) {
+      setResults([])
+      onClear?.()
+      return
+    }
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => search(q), 300)
+  }
+
+  const handleSelect = (feature: any) => {
+    const [lng, lat] = feature.center
+    setQuery(feature.place_name)
+    setResults([])
+
+    onSearchResult(lng, lat)
+
+    const map = mapRef.current
+    if (!map) return
+
+    map.flyTo({ center: [lng, lat], zoom: 13, duration: 1000 })
+    map.once('moveend', () => {
+      // Guard: layer must exist
+      if (!map.getLayer('tracts-fill')) return
+    
+      const point = map.project([lng, lat])
+      const features = map.queryRenderedFeatures(point, {
+        layers: ['tracts-fill'],
+      })
+      if (features.length > 0) {
+        const geoid = features[0].properties?.geoid
+        if (geoid) onTractFound(geoid)
+      }
+    })
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') clear()
+  }
+
+  useEffect(() => {
+    onClearRef?.(clear)
+  }, [clear, onClearRef])
+
+  return (
+    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 w-80">
+      <div className="relative">
+        <input
+          type="text"
+          value={query}
+          onChange={handleInput}
+          onKeyDown={handleKeyDown}
+          placeholder="Search for an address"
+          className="input input-sm w-full bg-base-100/95 shadow-lg border border-base-content/10 pr-14"
+        />
+
+        {/* Right-side controls */}
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          {loading && (
+            <span className="loading loading-spinner loading-xs opacity-50" />
+          )}
+          {query && !loading && (
+            <button
+              type="button"
+              onClick={clear}
+              className="btn btn-xs btn-circle btn-ghost opacity-50 hover:opacity-100"
+              aria-label="Clear search"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
+
+      {results.length > 0 && (
+        <ul className="menu bg-base-100/95 rounded-box shadow-lg mt-1 border border-base-content/10 p-1">
+          {results.map((f) => (
+            <li key={f.id}>
+              <button
+                className="text-sm text-left py-1.5"
+                onClick={() => handleSelect(f)}
+              >
+                {f.place_name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}

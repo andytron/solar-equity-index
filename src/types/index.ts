@@ -17,3 +17,7 @@ export interface TractProperties {
   pct_nonwhite: number
   majority_minority: number
 }
+export interface TopTract extends TractProperties {
+  display_name: string
+  name: string
+}

@@ -4,10 +4,11 @@ export default function Legend() {
   return (
     <div
       data-theme="dark"
+      id="map-legend"
       className="card card-sm card-border shadow-lg absolute bottom-8 left-4 z-10 w-fit"
     >
       <div className="card-body gap-2 py-3 px-3">
-        <div className="text-xs text-base-content/60 uppercase tracking-wide">
+        <div className="text-xs text-base-content/80 uppercase tracking-wide">
           Solar Equity Index
         </div>
         <div className="flex flex-col gap-1.5">

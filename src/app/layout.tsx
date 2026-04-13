@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Manrope, IBM_Plex_Mono } from 'next/font/google'
+import { Manrope, IBM_Plex_Mono, Playfair_Display } from 'next/font/google'
 import './globals.css'
 
 const manrope = Manrope({
@@ -11,6 +11,11 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
   subsets: ['latin'],
   weight: ['400', '500', '600'],
+})
+
+const playfairDisplay = Playfair_Display({
+  variable: '--font-playfair-display',
+  subsets: ['latin'],
 })
 
 export const metadata: Metadata = {
@@ -26,8 +31,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="light"
-      className={`${manrope.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      data-theme="dark"
+      className={`${manrope.variable} ${ibmPlexMono.variable} ${playfairDisplay.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

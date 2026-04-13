@@ -16,6 +16,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-manrope-sans);
   --font-mono: var(--font-ibm-plex-mono);
+  --font-serif: var(--font-playfair-display);
 }
 
 @media (prefers-color-scheme: dark) {

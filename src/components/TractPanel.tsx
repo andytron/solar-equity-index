@@ -69,34 +69,43 @@ export default function TractPanel({ tract, onClose }: Props) {
       className="card card-border w-80 shadow-2xl absolute top-4 right-4 z-20 overflow-hidden"
     >
       <div className="card-body gap-0 p-0">
+        {/* SEI Score */}
         <div
-          className="px-4 py-3 flex items-center justify-between"
+          className="relative px-4 pt-4 pb-3"
           style={{ borderLeft: `4px solid ${tierColor}` }}
         >
-          <div>
-            <div className="text-xs text-base-content/60 uppercase tracking-wide">
-              {tract.district}
-            </div>
-            <div className="font-semibold font-mono">Tract {tract.geoid.slice(-6)}</div>
+          {/* Close button — anchored top-right */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-2 right-2 btn btn-xs btn-circle btn-ghost"
+            aria-label="Close panel"
+          >
+            ✕
+          </button>
+
+          {/* District label */}
+          <div className="text-xs text-base-content/50 uppercase tracking-wide">
+            {tract.district}
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* SEI score + tier badge on same line */}
+          <div className="flex items-end gap-2 mt-0.5">
+            <span className="text-3xl font-bold font-mono tabular-nums">
+              {tract.sei.toFixed(2)}
+            </span>
+            <span className="text-sm text-base-content/50 mb-1">/ 1.00</span>
             <span
-              className="badge badge-sm font-medium border-0"
-              style={{
-                backgroundColor: tierColor + '33',
-                color: tierColor,
-              }}
+              className="badge badge-sm font-medium border-0 mb-1 ml-1"
+              style={{ backgroundColor: tierColor + '33', color: tierColor }}
             >
               {tract.sei_tier}
             </span>
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-sm btn-circle btn-ghost"
-              aria-label="Close panel"
-            >
-              ✕
-            </button>
+          </div>
+
+          {/* Percentile */}
+          <div className="text-xs text-base-content/50 mt-0.5">
+            {fmt.percentileLabel(tract.sei_percentile)} in {tract.district}
           </div>
         </div>
 
@@ -116,12 +125,15 @@ export default function TractPanel({ tract, onClose }: Props) {
                     {fmt.percentileLabel(value)}
                   </span>
                 </div>
-                <progress
-                  className="progress w-full h-1.5"
-                  style={{ color }}
-                  value={Math.round(value * 100)}
-                  max={100}
-                />
+                <div className="h-1.5 bg-base-content/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.round(value * 100)}%`,
+                      backgroundColor: color,
+                    }}
+                  />
+                </div>
               </div>
             )
           })}
@@ -136,6 +148,12 @@ export default function TractPanel({ tract, onClose }: Props) {
               <div className="text-sm font-mono font-medium mt-0.5">{value}</div>
             </div>
           ))}
+        </div>
+
+        <div className="px-4 py-2 border-t border-base-content/10">
+          <div className="text-xs text-base-content/50 font-mono">
+            {tract.district} · Tract {tract.geoid.slice(-6)} · GEOID {tract.geoid}
+          </div>
         </div>
       </div>
     </div>
