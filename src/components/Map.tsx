@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { TractProperties } from '@/types'
@@ -29,6 +29,7 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
   const searchMarkerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const onTractClickRef = useRef(onTractClick)
   const onTractHoverRef = useRef(onTractHover)
+  const [tilesLoading, setTilesLoading] = useState(true)
 
   useEffect(() => {
     onTractClickRef.current = onTractClick
@@ -106,6 +107,12 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
             0.5,
           ],
         },
+      })
+
+      map.on('sourcedata', (e) => {
+        if (e.sourceId === 'tracts' && e.isSourceLoaded) {
+          setTilesLoading(false)
+        }
       })
 
       const placeSearchMarker = (lng: number, lat: number) => {
@@ -256,5 +263,22 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
     )
   }
 
-  return <div ref={containerRef} className="w-full h-full" />
+  return (
+    <div className="relative h-full w-full">
+      <div
+        ref={containerRef}
+        className="h-full w-full"
+        role="application"
+        aria-label="Solar Equity Index map"
+      />
+      {tilesLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-base-200/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-3">
+            <span className="loading loading-spinner loading-lg" />
+            <span className="text-sm text-base-content/60">Loading map data...</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }

@@ -12,7 +12,9 @@ export default function CityToggle({ city, onChange }: Props) {
         <button
           key={key}
           className={`join-item btn btn-sm ${
-            city === key ? 'btn-primary' : 'btn-ghost bg-base-100/90'
+            city === key
+              ? 'border-transparent bg-base-content text-base-100 hover:bg-base-content/90'
+              : 'btn-ghost bg-base-100/90'
           }`}
           onClick={() => onChange(key)}
         >

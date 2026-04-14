@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { TractProperties } from '@/types'
 import { colorForSeiTier } from '@/lib/tierColors'
 
@@ -62,11 +63,26 @@ function statRowsFor(tract: TractProperties) {
 export default function TractPanel({ tract, onClose }: Props) {
   const tierColor = colorForSeiTier(tract.sei_tier)
   const statRows = statRowsFor(tract)
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    panelRef.current?.focus()
+  }, [])
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
 
   return (
     <div
       data-theme="dark"
+      ref={panelRef}
       className="card card-border w-80 shadow-2xl absolute top-4 right-4 z-20 overflow-hidden"
+      tabIndex={-1}
     >
       <div className="card-body gap-0 p-0">
         {/* SEI Score */}

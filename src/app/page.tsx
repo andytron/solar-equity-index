@@ -124,6 +124,11 @@ export default function Home() {
         onToggle={() => setDrawerOpen((o) => !o)}
       />
       <Legend />
+      {!selectedTract && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-base-100/90 rounded-full px-4 py-2 shadow text-xs text-base-content pointer-events-none hidden md:block">
+          Click any tract to explore · Search for an address
+        </div>
+      )}
       <MethodologyModal
         isOpen={methodologyOpen}
         onClose={() => setMethodologyOpen(false)}
