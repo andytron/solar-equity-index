@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type MutableRefObject } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { TractProperties } from '@/types'
+import { STANDARD_BASEMAP } from '@/lib/mapBasemap'
 import { DEFAULT_TIER_COLOR, TIER_COLORS } from '@/lib/tierColors'
 import { CITY_CONFIG, type CityKey } from '@/lib/utils'
 
@@ -59,10 +60,7 @@ export default function Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/standard',
       config: {
-        basemap: {
-          lightPreset: 'dawn',
-          theme: 'monochrome',
-        },
+        basemap: STANDARD_BASEMAP,
       },
       center: cfg.center,
       zoom: cfg.zoom,

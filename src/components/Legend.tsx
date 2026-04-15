@@ -61,7 +61,6 @@ export function LegendMobileControl() {
       {open && (
         <div
           id="map-legend-popover"
-          data-theme="dark"
           className="card card-sm card-border absolute bottom-full left-0 z-30 mb-2 w-56 shadow-2xl"
         >
           <div className="card-body gap-2 px-3 py-3">
@@ -77,12 +76,9 @@ export default function Legend() {
   return (
     <div
       id="map-legend"
-      className="absolute bottom-[calc(var(--app-footer-h)+1rem)] left-4 z-20 hidden md:block"
+      className="bg-base-100 absolute bottom-[calc(var(--app-footer-h)+1rem)] left-4 z-20 hidden md:block"
     >
-      <div
-        data-theme="dark"
-        className="card card-sm card-border w-fit shadow-lg"
-      >
+      <div className="card card-sm card-border w-fit shadow-lg">
         <div className="card-body gap-2 px-3 py-3">
           <LegendContent />
         </div>

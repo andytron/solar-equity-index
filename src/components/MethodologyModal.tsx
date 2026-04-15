@@ -10,10 +10,7 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
 
   return (
     <dialog className="modal modal-open">
-      <div
-        className="modal-box w-11/12 max-w-3xl max-h-[80vh] overflow-y-auto"
-        data-theme="dark"
-      >
+      <div className="modal-box w-11/12 max-w-3xl max-h-[80vh] overflow-y-auto">
         <button
           className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3"
           onClick={onClose}

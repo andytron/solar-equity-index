@@ -88,10 +88,9 @@ export default function TractPanel({
 
   return (
     <div
-      data-theme="dark"
       ref={panelRef}
       className={
-        'card card-border overflow-hidden shadow-2xl max-md:fixed max-md:inset-x-3 max-md:top-auto max-md:z-[110] max-md:overflow-y-auto max-md:rounded-t-xl max-md:w-auto md:absolute md:top-[calc(var(--app-header-h)+0.75rem)] md:right-4 md:z-20 md:bottom-auto md:left-auto md:max-h-none md:w-80 md:rounded-box ' +
+        'card card-border bg-base-100 overflow-hidden shadow-2xl max-md:fixed max-md:inset-x-3 max-md:top-auto max-md:z-[110] max-md:overflow-y-auto max-md:rounded-t-xl max-md:w-auto md:absolute md:top-[calc(var(--app-header-h)+0.75rem)] md:right-4 md:z-20 md:bottom-auto md:left-auto md:max-h-none md:w-80 md:rounded-box ' +
         (mobileDockAboveChromeBar
           ? 'max-md:bottom-[calc(var(--app-footer-h)+var(--app-mobile-bottom-bar-h)+0.5rem)] max-md:max-h-[min(55vh,calc(100vh-var(--app-header-h)-var(--app-footer-h)-var(--app-mobile-bottom-bar-h)-1.25rem))]'
           : 'max-md:bottom-[calc(var(--app-footer-h)+0.5rem)] max-md:max-h-[min(72vh,calc(100vh-var(--app-header-h)-var(--app-footer-h)-1.5rem))]')

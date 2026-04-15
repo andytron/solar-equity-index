@@ -52,8 +52,8 @@ export default function HoverTooltip({ tract, point }: Props) {
   return (
     <div
       ref={elRef}
-      data-theme="dark"
-      className="card card-sm card-border shadow-lg pointer-events-none absolute z-10 text-sm"
+      data-theme="light"
+      className="card card-sm bg-base-100 card-border shadow-lg pointer-events-none absolute z-10 text-sm"
       style={{ left: position.left, top: position.top }}
     >
       <div className="card-body gap-1 py-2 px-3">
