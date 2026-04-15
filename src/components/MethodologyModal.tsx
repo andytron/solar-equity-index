@@ -1,3 +1,5 @@
+import { SITE_TITLE } from '@/lib/site'
+import { accentBadgeStyle } from '@/lib/tierColors'
 interface Props {
   isOpen: boolean
   onClose: () => void
@@ -21,7 +23,7 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
 
         {/* Header */}
         <div className="mb-5">
-          <h3 className="font-serif font-bold text-lg">Solar Equity Index</h3>
+          <h3 className="font-mono font-bold text-lg">{SITE_TITLE}</h3>
           <p className="text-sm text-base-content/50 mt-0.5">
             Methodology and data sources
           </p>
@@ -102,10 +104,7 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
                         {label}
                         <span
                           className="badge badge-xs border-0"
-                          style={{
-                            backgroundColor: color + '22',
-                            color,
-                          }}
+                          style={accentBadgeStyle(color)}
                         >
                           {weight}
                         </span>

@@ -13,6 +13,7 @@ interface Props {
   onToggle: () => void
 }
 
+/** Desktop-only (parent hides on `max-md`). */
 export default function TopTractsDrawer({
   city, onTractSelect, isOpen, onToggle
 }: Props) {
@@ -47,20 +48,23 @@ export default function TopTractsDrawer({
   }, [city])
 
   return (
-    <div className="absolute top-16 left-4 z-20 flex items-start">
-      {/* Drawer panel */}
+    <div className="flex items-start self-start">
       <div
-        className={`transition-all duration-300 overflow-hidden ${isOpen ? 'w-72' : 'w-0'}`}
+        className={`transition-[width] duration-300 ease-out ${
+          isOpen
+            ? 'w-72 overflow-x-hidden'
+            : 'w-0 overflow-hidden'
+        }`}
       >
         <div
           ref={listScrollRef}
-          className="w-72 bg-base-100/95 shadow-lg border-r border-base-content/10 h-fit max-h-[calc(100vh-17rem)] overflow-y-auto"
+          className="w-72 max-h-[calc(100vh-var(--app-header-h)-var(--app-footer-h)-var(--app-drawer-bottom-reserve-md))] overflow-y-auto bg-base-100/95 shadow-lg border-r border-base-content/10"
         >
           <div className="px-3 py-2 border-b border-base-content/10">
-            <div className="text-xs font-semibold uppercase tracking-wide opacity-80">
+            <div className="text-xs font-semibold uppercase tracking-wide text-base-content/80">
               Top Opportunity Tracts
             </div>
-            <div className="text-xs opacity-50 mt-0.5">
+            <div className="text-xs text-base-content/50 mt-0.5">
               Highest SEI · {CITY_CONFIG[city].label}
             </div>
           </div>
@@ -68,23 +72,24 @@ export default function TopTractsDrawer({
             {tracts.map((tract, i) => (
               <li key={tract.geoid}>
                 <button
-                  className="w-full text-left px-3 py-2 hover:bg-base-content/5 transition-colors flex items-start gap-2"
+                  type="button"
+                  className="flex w-full items-start gap-2 px-3 py-2 text-left transition-colors hover:bg-base-content/5"
                   onClick={() => onTractSelect(tract.geoid)}
                 >
-                  <span className="text-xs opacity-50 w-4 flex-shrink-0 mt-0.5">
+                  <span className="mt-0.5 w-4 flex-shrink-0 text-xs text-base-content/50">
                     {i + 1}
                   </span>
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span
-                        className="inline-block w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        className="inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                         style={{ backgroundColor: TIER_COLORS[tract.sei_tier] }}
                       />
-                      <span className="text-sm font-medium truncate">
+                      <span className="truncate text-sm font-medium">
                         {tract.display_name}
                       </span>
                     </div>
-                    <div className="font-mono text-xs opacity-50 mt-0.5 flex gap-2">
+                    <div className="mt-0.5 flex gap-2 font-mono text-xs text-base-content/50">
                       <span>SEI {tract.sei.toFixed(2)}</span>
                       <span>·</span>
                       <span>{fmt.pct(tract.energy_burden_pct)} burden</span>
@@ -97,16 +102,15 @@ export default function TopTractsDrawer({
         </div>
       </div>
 
-      {/* Toggle tab — attached to right edge of drawer */}
       <button
+        type="button"
         onClick={onToggle}
-        className="flex flex-col items-center justify-center gap-1 bg-base-100/95 border border-l-0 border-base-content/10 shadow px-1.5 py-3 rounded-r-lg hover:bg-base-200/95 transition-colors min-h-[51px]"
+        className="flex min-h-[51px] flex-col items-center justify-center gap-1 rounded-r-lg border border-l-0 border-base-content/10 bg-base-100/95 px-1.5 py-3 shadow transition-colors hover:bg-base-200/95"
         title={isOpen ? 'Hide top tracts' : 'Show top tracts'}
         aria-label={isOpen ? 'Hide top tracts' : 'Show top tracts'}
       >
-        {/* Chevron icon that flips direction */}
         <svg
-          className={`w-3 h-3 opacity-50 transition-transform duration-300 ${isOpen ? 'rotate-0' : 'rotate-180'}`}
+          className={`h-3 w-3 opacity-50 transition-transform duration-300 ${isOpen ? 'rotate-0' : 'rotate-180'}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -115,9 +119,7 @@ export default function TopTractsDrawer({
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
 
-        {/* Vertical label */}
-        {isOpen
-        ? null : (
+        {isOpen ? null : (
           <span
             className="text-xs font-medium tracking-wide"
             style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}

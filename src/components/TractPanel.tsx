@@ -1,10 +1,15 @@
 import { useEffect, useRef } from 'react'
 import type { TractProperties } from '@/types'
-import { colorForSeiTier } from '@/lib/tierColors'
+import { colorForSeiTier, tierBadgeStyle } from '@/lib/tierColors'
 
 interface Props {
   tract: TractProperties
   onClose: () => void
+  /**
+   * Mobile: when false, dock the sheet just above the footer (bottom chrome bar hidden)
+   * so the panel sits lower and can use more height.
+   */
+  mobileDockAboveChromeBar?: boolean
 }
 
 const fmt = {
@@ -60,7 +65,11 @@ function statRowsFor(tract: TractProperties) {
   ] as const
 }
 
-export default function TractPanel({ tract, onClose }: Props) {
+export default function TractPanel({
+  tract,
+  onClose,
+  mobileDockAboveChromeBar = true,
+}: Props) {
   const tierColor = colorForSeiTier(tract.sei_tier)
   const statRows = statRowsFor(tract)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -81,7 +90,12 @@ export default function TractPanel({ tract, onClose }: Props) {
     <div
       data-theme="dark"
       ref={panelRef}
-      className="card card-border w-80 shadow-2xl absolute top-4 right-4 z-20 overflow-hidden"
+      className={
+        'card card-border overflow-hidden shadow-2xl max-md:fixed max-md:inset-x-3 max-md:top-auto max-md:z-[110] max-md:overflow-y-auto max-md:rounded-t-xl max-md:w-auto md:absolute md:top-[calc(var(--app-header-h)+0.75rem)] md:right-4 md:z-20 md:bottom-auto md:left-auto md:max-h-none md:w-80 md:rounded-box ' +
+        (mobileDockAboveChromeBar
+          ? 'max-md:bottom-[calc(var(--app-footer-h)+var(--app-mobile-bottom-bar-h)+0.5rem)] max-md:max-h-[min(55vh,calc(100vh-var(--app-header-h)-var(--app-footer-h)-var(--app-mobile-bottom-bar-h)-1.25rem))]'
+          : 'max-md:bottom-[calc(var(--app-footer-h)+0.5rem)] max-md:max-h-[min(72vh,calc(100vh-var(--app-header-h)-var(--app-footer-h)-1.5rem))]')
+      }
       tabIndex={-1}
     >
       <div className="card-body gap-0 p-0">
@@ -113,7 +127,7 @@ export default function TractPanel({ tract, onClose }: Props) {
             <span className="text-sm text-base-content/50 mb-1">/ 1.00</span>
             <span
               className="badge badge-sm font-medium border-0 mb-1 ml-1"
-              style={{ backgroundColor: tierColor + '33', color: tierColor }}
+              style={tierBadgeStyle(tract.sei_tier)}
             >
               {tract.sei_tier}
             </span>
