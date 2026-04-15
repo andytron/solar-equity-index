@@ -151,6 +151,7 @@ export default function Home() {
 
   const clearSelection = useCallback(() => {
     setSelectedTract(null)
+    clearSearchRef.current?.()
   }, [])
 
   const selectTractById = useCallback((geoid: string) => {
