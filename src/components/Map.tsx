@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type MutableRefObject } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { TractProperties } from '@/types'
@@ -9,6 +9,10 @@ import { CITY_CONFIG, type CityKey } from '@/lib/utils'
 
 interface MapProps {
   city: CityKey
+  /** Selected tract GEOID from app state (drawer, search, etc.) — keeps map highlight in sync with map clicks. */
+  selectedGeoid: string | null
+  /** When true on the next city apply, only swap tract GeoJSON — skip default overview fly (e.g. search-driven city switch). */
+  suppressOverviewFlyRef?: MutableRefObject<boolean>
   onTractClick: (props: TractProperties | null) => void
   onTractHover: (
     props: TractProperties | null,
@@ -21,10 +25,18 @@ interface MapProps {
   ) => void
 }
 
-export default function Map({ city, onTractClick, onTractHover, onMapReady }: MapProps) {
+export default function Map({
+  city,
+  selectedGeoid,
+  suppressOverviewFlyRef,
+  onTractClick,
+  onTractHover,
+  onMapReady,
+}: MapProps) {
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<mapboxgl.Map | null>(null)
+  const appliedHighlightGeoidRef = useRef<string | null>(null)
   const searchMarkerRef = useRef<mapboxgl.Marker | null>(null)
   const searchMarkerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const onTractClickRef = useRef(onTractClick)
@@ -132,8 +144,8 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
           height: 14px;
           border-radius: 50%;
           background: white;
-          border: 3px solid #6366f1;
-          box-shadow: 0 0 0 4px rgba(99,102,241,0.25), 0 2px 8px rgba(0,0,0,0.4);
+          border: 3px solid var(--color-primary);
+          box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary) 28%, transparent), 0 2px 8px rgba(0,0,0,0.4);
           transition: opacity 0.5s ease;
         `
 
@@ -193,27 +205,13 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
       onTractHoverRef.current(null, null)
     })
 
-    let selectedId: string | null = null
-
-    map.on('click', 'tracts-fill', (e) => {
-      if (!e.features?.length) return
-      const props = e.features[0].properties as TractProperties
-
-      if (selectedId) {
-        map.setFeatureState({ source: 'tracts', id: selectedId }, { selected: false })
-      }
-      selectedId = props.geoid
-      map.setFeatureState({ source: 'tracts', id: props.geoid }, { selected: true })
-      onTractClickRef.current(props)
-    })
-
+    // Single handler: layer-specific + global map clicks both fire; a second handler
+    // calling onTractClick(null) when queryRenderedFeatures misses the tract clears selection.
     map.on('click', (e) => {
       const features = map.queryRenderedFeatures(e.point, { layers: ['tracts-fill'] })
-      if (!features.length) {
-        if (selectedId) {
-          map.setFeatureState({ source: 'tracts', id: selectedId }, { selected: false })
-          selectedId = null
-        }
+      if (features.length > 0) {
+        onTractClickRef.current(features[0].properties as TractProperties)
+      } else {
         onTractClickRef.current(null)
       }
     })
@@ -237,6 +235,10 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
     const applyCity = () => {
       const source = map.getSource('tracts') as mapboxgl.GeoJSONSource | undefined
       if (source) source.setData(cfg.geojson)
+      if (suppressOverviewFlyRef?.current) {
+        suppressOverviewFlyRef.current = false
+        return
+      }
       map.flyTo({ center: cfg.center, zoom: cfg.zoom, duration: 1200 })
     }
   
@@ -245,7 +247,38 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
     } else {
       map.once('style.load', applyCity)
     }
-  }, [city])  
+  }, [city, suppressOverviewFlyRef])
+
+  useEffect(() => {
+    appliedHighlightGeoidRef.current = null
+  }, [city])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    const sync = () => {
+      if (!map.isStyleLoaded() || !map.getLayer('tracts-fill')) return
+      const prev = appliedHighlightGeoidRef.current
+      if (prev === selectedGeoid) return
+      if (prev) {
+        map.setFeatureState({ source: 'tracts', id: prev }, { selected: false })
+      }
+      if (selectedGeoid) {
+        map.setFeatureState({ source: 'tracts', id: selectedGeoid }, { selected: true })
+      }
+      appliedHighlightGeoidRef.current = selectedGeoid
+    }
+
+    if (map.isStyleLoaded() && map.getLayer('tracts-fill')) {
+      sync()
+    } else {
+      map.once('idle', sync)
+      return () => {
+        map.off('idle', sync)
+      }
+    }
+  }, [selectedGeoid, city])
 
   if (!token) {
     return (
@@ -264,7 +297,7 @@ export default function Map({ city, onTractClick, onTractHover, onMapReady }: Ma
   }
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative z-0 h-full w-full">
       <div
         ref={containerRef}
         className="h-full w-full"

@@ -1,21 +1,19 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
-import mapboxgl from 'mapbox-gl'
 
 interface Props {
-  mapRef: React.RefObject<mapboxgl.Map | null>
-  onTractFound: (geoid: string) => void
-  onSearchResult: (lng: number, lat: number) => void
-  onClear?: () => void  // optional callback so parent can react to clear
+  /** Parent handles city switch, map fly, marker, and tract resolution. */
+  onSelectSearchResult: (lng: number, lat: number) => void
+  onClear?: () => void
   onClearRef?: (clearFn: () => void) => void
 }
 
-export default function SearchBar({ mapRef, onTractFound, onSearchResult, onClear, onClearRef }: Props) {
+export default function SearchBar({ onSelectSearchResult, onClear, onClearRef }: Props) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const clear = useCallback(() => {
     setQuery('')
@@ -48,7 +46,7 @@ export default function SearchBar({ mapRef, onTractFound, onSearchResult, onClea
       onClear?.()
       return
     }
-    clearTimeout(debounceRef.current)
+    if (debounceRef.current !== undefined) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => search(q), 300)
   }
 
@@ -57,25 +55,7 @@ export default function SearchBar({ mapRef, onTractFound, onSearchResult, onClea
     setQuery(feature.place_name)
     setResults([])
 
-    onSearchResult(lng, lat)
-
-    const map = mapRef.current
-    if (!map) return
-
-    map.flyTo({ center: [lng, lat], zoom: 13, duration: 1000 })
-    map.once('moveend', () => {
-      // Guard: layer must exist
-      if (!map.getLayer('tracts-fill')) return
-    
-      const point = map.project([lng, lat])
-      const features = map.queryRenderedFeatures(point, {
-        layers: ['tracts-fill'],
-      })
-      if (features.length > 0) {
-        const geoid = features[0].properties?.geoid
-        if (geoid) onTractFound(geoid)
-      }
-    })
+    onSelectSearchResult(lng, lat)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -87,7 +67,7 @@ export default function SearchBar({ mapRef, onTractFound, onSearchResult, onClea
   }, [clear, onClearRef])
 
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 w-80">
+    <div className="absolute top-[calc(var(--app-header-h)+0.75rem)] z-20 max-md:left-3 max-md:right-3 max-md:w-auto max-md:translate-x-0 md:left-1/2 md:w-80 md:-translate-x-1/2">
       <div className="relative">
         <input
           type="text"

@@ -3,11 +3,13 @@ import { CITY_CONFIG, type CityKey } from '@/lib/utils'
 interface Props {
   city: CityKey
   onChange: (city: CityKey) => void
+  /** Merged onto the join wrapper (e.g. shrink-0 in header). */
+  className?: string
 }
 
-export default function CityToggle({ city, onChange }: Props) {
+export default function CityToggle({ city, onChange, className }: Props) {
   return (
-    <div className="absolute top-4 left-4 z-20 join shadow-lg">
+    <div className={['join shadow-lg self-start', className].filter(Boolean).join(' ')}>
       {(Object.keys(CITY_CONFIG) as CityKey[]).map((key) => (
         <button
           key={key}
