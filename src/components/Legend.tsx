@@ -61,7 +61,7 @@ export function LegendMobileControl() {
       {open && (
         <div
           id="map-legend-popover"
-          className="card card-sm card-border absolute bottom-full left-0 z-30 mb-2 w-56 shadow-2xl"
+          className="card card-sm card-border bg-base-100 absolute bottom-full left-0 z-30 mb-2 w-56 shadow-2xl"
         >
           <div className="card-body gap-2 px-3 py-3">
             <LegendContent />
