@@ -26,8 +26,7 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
           </p>
         </div>
 
-        {/* Two-column layout */}
-        <div className="grid grid-cols-2 gap-6 text-sm">
+        <div className="grid grid-cols-1 gap-6 text-sm md:grid-cols-2">
 
           {/* Left column */}
           <div className="space-y-4">
