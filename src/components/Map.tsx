@@ -216,8 +216,21 @@ export default function Map({
     })
 
     mapRef.current = map
+
+    const container = containerRef.current
+    const resizeObserver =
+      container &&
+      new ResizeObserver(() => {
+        map.resize()
+      })
+    if (container && resizeObserver) {
+      resizeObserver.observe(container)
+      requestAnimationFrame(() => map.resize())
+    }
+
     return () => {
       alive = false
+      resizeObserver?.disconnect()
       if (searchMarkerTimeoutRef.current) clearTimeout(searchMarkerTimeoutRef.current)
       map.remove()
       mapRef.current = null

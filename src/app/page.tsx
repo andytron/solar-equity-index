@@ -19,6 +19,7 @@ import {
   COPYRIGHT_YEAR,
   SITE_TITLE,
 } from '@/lib/site'
+import { useVisualViewportHeight } from '@/hooks/useVisualViewportHeight'
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false })
 
@@ -100,6 +101,7 @@ const mainChromeStyle = {
 } as CSSProperties
 
 export default function Home() {
+  const visualViewportHeight = useVisualViewportHeight()
   const [city, setCity] = useState<CityKey>('nyc')
   const [selectedTract, setSelectedTract] = useState<TractProperties | null>(null)
   const [hover, setHover] = useState<HoverState | null>(null)
@@ -237,8 +239,16 @@ export default function Home() {
 
   return (
     <main
-      className="relative h-screen w-screen overflow-hidden bg-base-200"
-      style={mainChromeStyle}
+      className={
+        visualViewportHeight == null
+          ? 'relative min-h-[100dvh] w-screen overflow-hidden bg-base-200'
+          : 'relative w-screen overflow-hidden bg-base-200'
+      }
+      style={
+        visualViewportHeight == null
+          ? mainChromeStyle
+          : { ...mainChromeStyle, height: visualViewportHeight, minHeight: visualViewportHeight }
+      }
     >
       <header className="fixed inset-x-0 top-0 z-30 border-b border-base-content/10 bg-base-100/85 pt-[env(safe-area-inset-top)] backdrop-blur-sm">
         <div className="flex h-14 min-w-0 items-center justify-between gap-3 px-4">
