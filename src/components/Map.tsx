@@ -62,6 +62,7 @@ export default function Map({
       config: {
         basemap: STANDARD_BASEMAP,
       },
+      attributionControl: false,
       center: cfg.center,
       zoom: cfg.zoom,
     })

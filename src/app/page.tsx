@@ -273,18 +273,20 @@ export default function Home() {
         </div>
       </footer>
 
-      <Map
-        city={city}
-        selectedGeoid={selectedTract?.geoid ?? null}
-        suppressOverviewFlyRef={suppressOverviewFlyRef}
-        onTractClick={handleTractClick}
-        onTractHover={onTractHover}
-        onMapReady={(map, placeSearchMarker, clearSearchMarker) => {
-          mapInstanceRef.current = map
-          placeSearchMarkerRef.current = placeSearchMarker
-          clearSearchMarkerRef.current = clearSearchMarker
-        }}
-      />
+      <div className="absolute inset-x-0 top-0 bottom-[var(--app-footer-h)] z-0 min-h-0">
+        <Map
+          city={city}
+          selectedGeoid={selectedTract?.geoid ?? null}
+          suppressOverviewFlyRef={suppressOverviewFlyRef}
+          onTractClick={handleTractClick}
+          onTractHover={onTractHover}
+          onMapReady={(map, placeSearchMarker, clearSearchMarker) => {
+            mapInstanceRef.current = map
+            placeSearchMarkerRef.current = placeSearchMarker
+            clearSearchMarkerRef.current = clearSearchMarker
+          }}
+        />
+      </div>
 
       {/* Top tracts drawer: desktop only — mobile scroll/z-index issues + tract sheet priority */}
       <div className="absolute left-4 z-20 hidden flex-col gap-2 md:flex md:top-[calc(var(--app-header-h)+0.75rem)]">
