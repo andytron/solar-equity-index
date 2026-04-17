@@ -44,23 +44,14 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
             <section>
               <h4 className="font-semibold mb-1">Tiers</h4>
               <p className="text-base-content/70 leading-relaxed text-xs">
-                Tracts are ranked within each city and divided into quartiles.{' '}
-                <strong>Critical</strong> tracts are in the top 25% — the
-                highest combined opportunity for solar equity intervention.
-                Rankings are city-relative: a Critical tract in NYC is
-                critical compared to other NYC tracts, not to LA.
+                Tracts are scored continuously within each city and divided into four tiers. <strong>Critical</strong> tracts fall in the top tier — the highest combined opportunity for solar equity intervention. Rankings are city-relative: a <strong>Critical</strong> tract in NYC is critical compared to other NYC tracts, not to LA.
               </p>
             </section>
 
             <section>
               <h4 className="font-semibold mb-1">Limitations</h4>
               <p className="text-base-content/70 leading-relaxed text-xs">
-                Solar potential uses county-level irradiance averaged across
-                sample points — tract-level shading and rooftop geometry are
-                not captured. Adoption rates are estimated from zip-code level
-                data allocated to tracts via residential population weights.
-                Energy burden reflects 0–80% AMI households only. All data
-                reflects the most recent available vintage (2022–2024).
+                Solar potential uses irradiance averaged across sample points per county — tract-level shading and rooftop geometry are not captured. Adoption rates are estimated from zip-code level data allocated to tracts via residential population weights. Energy burden reflects 0–80% AMI households only. The top-tracts surface applies an equity eligibility filter (majority-minority tracts or median income below ~$120k); the full scored dataset is unfiltered. All data reflects the most recent available vintage (2022–2024).
               </p>
             </section>
           </div>
@@ -75,13 +66,13 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
                     label: 'Solar Potential',
                     weight: '40%',
                     color: '#EECA3B',
-                    desc: 'Estimated rooftop PV capacity per housing unit from building structure type (Census B25024) and irradiance (NREL PVWatts v8).',
+                    desc: 'Estimated rooftop PV capacity per housing unit, combining building structure type (Census B25024) — which assigns higher capacity to small residential buildings than large multifamily — with irradiance from NREL PVWatts v8.',
                   },
                   {
                     label: 'Energy Burden',
                     weight: '40%',
                     color: '#E45756',
-                    desc: 'Average energy cost as % of income for 0–80% AMI households. Source: DOE LEAD Tool 2022, calibrated to EIA utility data.',
+                    desc: 'Average energy cost as % of income for 0–80% AMI households. Source: DOE LEAD Tool 2022.',
                   },
                   {
                     label: 'Adoption Gap',
