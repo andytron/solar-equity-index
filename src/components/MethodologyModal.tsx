@@ -1,5 +1,8 @@
 import { SITE_TITLE } from '@/lib/site'
 import { accentBadgeStyle } from '@/lib/tierColors'
+import {
+  HEX_NOTEBOOK_URL,
+} from '@/lib/site'
 interface Props {
   isOpen: boolean
   onClose: () => void
@@ -31,10 +34,10 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
           {/* Left column */}
           <div className="space-y-4">
             <section>
-              <h4 className="font-semibold mb-1">What it measures</h4>
+              <h4 className="font-semibold mb-1">What this measures</h4>
               <p className="text-base-content/70 leading-relaxed text-xs">
                 The Solar Equity Index (SEI) identifies census tracts where
-                the opportunity for solar intervention is greatest — where
+                the opportunity for solar intervention is greatest:
                 rooftop solar potential is high, low-to-moderate income
                 households carry a disproportionate energy burden, and solar
                 adoption has not yet taken hold.
@@ -44,14 +47,14 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
             <section>
               <h4 className="font-semibold mb-1">Tiers</h4>
               <p className="text-base-content/70 leading-relaxed text-xs">
-                Tracts are scored continuously within each city and divided into four tiers. <strong>Critical</strong> tracts fall in the top tier — the highest combined opportunity for solar equity intervention. Rankings are city-relative: a <strong>Critical</strong> tract in NYC is critical compared to other NYC tracts, not to LA.
+                Tracts are scored continuously within each city and divided into four tiers. <strong>Critical</strong> tracts fall in the top tier: the highest combined opportunity for solar equity intervention. Rankings are city-relative (i.e. a <strong>Critical</strong> tract in NYC is critical compared to other NYC tracts, not to LA).
               </p>
             </section>
 
             <section>
               <h4 className="font-semibold mb-1">Limitations</h4>
               <p className="text-base-content/70 leading-relaxed text-xs">
-                Solar potential uses irradiance averaged across sample points per county — tract-level shading and rooftop geometry are not captured. Adoption rates are estimated from zip-code level data allocated to tracts via residential population weights. Energy burden reflects 0–80% AMI households only. The top-tracts surface applies an equity eligibility filter (majority-minority tracts or median income below ~$120k); the full scored dataset is unfiltered. All data reflects the most recent available vintage (2022–2024).
+                Solar potential uses irradiance averaged across sample points per county (tract-level shading and rooftop geometry are <i>not</i> captured). Adoption rates are estimated from zip-code level data allocated to tracts via residential population weights. Energy burden reflects 0–80% AMI households only. The top-tracts surface applies an equity eligibility filter (majority-minority tracts or median income below ~$120k); the full scored dataset is unfiltered. All data reflects the most recent available vintage (2022–2024).
               </p>
             </section>
           </div>
@@ -66,19 +69,19 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
                     label: 'Solar Potential',
                     weight: '40%',
                     color: '#EECA3B',
-                    desc: 'Estimated rooftop PV capacity per housing unit, combining building structure type (Census B25024) — which assigns higher capacity to small residential buildings than large multifamily — with irradiance from NREL PVWatts v8.',
+                    desc: 'Estimated rooftop PV capacity per housing unit, combining building structure type (Census B25024); this assigns higher capacity to small residential buildings than large multifamily (with irradiance from NREL PVWatts v8).',
                   },
                   {
                     label: 'Energy Burden',
                     weight: '40%',
                     color: '#E45756',
-                    desc: 'Average energy cost as % of income for 0–80% AMI households. Source: DOE LEAD Tool 2022.',
+                    desc: 'Average energy cost as % of income for 0–80% AMI households (source: DOE LEAD Tool 2022).',
                   },
                   {
                     label: 'Adoption Gap',
                     weight: '20%',
                     color: '#4C78A8',
-                    desc: 'Inverse of solar PV adoption rate — tracts with less existing solar score higher. Source: LBNL Tracking the Sun 2024 via HUD zip-to-tract crosswalk.',
+                    desc: 'Inverse of solar PV adoption rate; tracts with less existing solar score higher (source: LBNL Tracking the Sun 2024 via HUD zip-to-tract crosswalk).',
                   },
                 ].map(({ label, weight, color, desc }) => (
                   <div key={label} className="flex gap-3">
@@ -107,14 +110,10 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
 
             {/* Data sources */}
             <section className="pt-3 border-t border-base-content/10">
-              <h4 className="font-semibold mb-2 text-xs">Data sources</h4>
+              <h4 className="font-semibold mb-2 text-xs">Other data sources</h4>
               <ul className="text-xs text-base-content/50 space-y-1">
                 {[
-                  'NREL PVWatts API v8',
-                  'DOE LEAD Tool 2022 (ACS 5-yr 2018–2022)',
-                  'LBNL Tracking the Sun 2024',
-                  'Census ACS 2022 (B25024, B02001, B03003, B25070)',
-                  'HUD USPS Zip-Tract Crosswalk Q4 2025',
+                  'Census ACS 2022 (B02001, B03003, B25070)',
                   'Census TIGER 2022 tract boundaries',
                 ].map((src) => (
                   <li key={src} className="flex items-start gap-1.5">
@@ -123,6 +122,19 @@ export default function MethodologyModal({ isOpen, onClose }: Props) {
                   </li>
                 ))}
               </ul>
+            </section>
+            
+            {/* Hex notebook */}
+            <section className="pt-3 border-t border-base-content/10">
+              <h4 className="font-semibold mb-2 text-xs">Hex notebook</h4>
+              <a
+                href={HEX_NOTEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link link-hover text-xs text-base-content"
+              >
+                {HEX_NOTEBOOK_URL}
+              </a>
             </section>
           </div>
         </div>
